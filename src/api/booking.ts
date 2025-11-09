@@ -1,6 +1,8 @@
+// navozz/aidf-final-back-end/.../src/api/booking.ts
+
 import { Router } from "express";
 import asyncHandler from "express-async-handler"; 
-import { createBooking } from "../application/booking";
+import { createBooking, getUserBookings } from "../application/booking";
 
 const router = Router();
 
@@ -10,14 +12,23 @@ const router = Router();
  * Requires authentication via Clerk middleware.
  */
 router.post(
-    "/",
-    asyncHandler(async (req, res) => {
-        // The application layer handles authentication check via req.auth
-        const newBooking = await createBooking(req);
-        
-        // Returns the new booking object, including the MongoDB _id needed for payment.
-        res.status(201).json(newBooking);
-    })
+  "/",
+  asyncHandler(async (req, res) => {
+    const newBooking = await createBooking(req);
+    res.status(201).json(newBooking);
+  })
+);
+
+/**
+ * GET /api/bookings/user/:userId
+ * Retrieves all bookings for the authenticated user.
+ */
+router.get(
+  "/user/:userId",
+  asyncHandler(async (req, res) => {
+    const bookings = await getUserBookings(req);
+    res.status(200).json(bookings);
+  })
 );
 
 export default router;

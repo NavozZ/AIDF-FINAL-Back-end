@@ -10,48 +10,66 @@ import NotFoundError from "../domain/errors/not-found-error";
 
 // Helper function to simulate unique room number generation (Task 1.1)
 function generateUniqueRoomNumber(): number {
-    // Note: In a production app, this would involve checking for room availability.
-    return Math.floor(100 + Math.random() * 900);
+  return Math.floor(100 + Math.random() * 900);
 }
 
 export async function createBooking(req: Request) {
-    const { userId } = getAuth(req);
-    //
-    if (!userId) { 
-        throw new UnauthorizedError("Authentication required for booking.");
-    }
+  const { userId } = getAuth(req);
 
-    const { hotelId, checkInDate, checkOutDate } = req.body;
+  if (!userId) {
+    throw new UnauthorizedError("Authentication required for booking.");
+  }
 
-    if (!hotelId || !checkInDate || !checkOutDate) {
-        throw new ValidationError("Hotel ID, check-in, and check-out dates are required.");
-    }
+  const { hotelId, checkInDate, checkOutDate } = req.body;
 
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
+  if (!hotelId || !checkInDate || !checkOutDate) {
+    throw new ValidationError("Hotel ID, check-in, and check-out dates are required.");
+  }
 
-    // Validation
-    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime()) || checkIn >= checkOut) {
-        throw new ValidationError("Invalid dates. Check-out must be after check-in.");
-    }
+  const checkIn = new Date(checkInDate);
+  const checkOut = new Date(checkOutDate);
 
-    const hotel = await Hotel.findById(hotelId);
-    if (!hotel) {
-        throw new NotFoundError("Hotel not found.");
-    }
+  if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime()) || checkIn >= checkOut) {
+    throw new ValidationError("Invalid dates. Check-out must be after check-in.");
+  }
 
-    const roomNumber = generateUniqueRoomNumber();
+  const hotel = await Hotel.findById(hotelId);
+  if (!hotel) {
+    throw new NotFoundError("Hotel not found.");
+  }
 
-    const newBooking = new Booking({
-        userId,
-        hotelId,
-        checkIn: checkIn,
-        checkOut: checkOut,
-        roomNumber: roomNumber,
-        paymentStatus: "PENDING", // Required initial status
-    });
+  const roomNumber = generateUniqueRoomNumber();
 
-    await newBooking.save();
+  const newBooking = new Booking({
+    userId,
+    hotelId,
+    checkIn,
+    checkOut,
+    roomNumber,
+    paymentStatus: "PENDING",
+  });
 
-    return newBooking;
+  await newBooking.save();
+  return newBooking;
+}
+
+
+// ---------------------- NEW FUNCTION (Task 1.3) ----------------------
+
+export async function getUserBookings(req: Request) {
+  const { userId } = getAuth(req);
+  
+  if (!userId) {
+    throw new UnauthorizedError("Authentication required.");
+  }
+
+  const bookings = await Booking.find({ userId })
+    .populate({
+      path: "hotelId",
+      select: "name location image price",
+    })
+    .sort({ checkIn: -1 })
+    .exec();
+
+  return bookings;
 }
