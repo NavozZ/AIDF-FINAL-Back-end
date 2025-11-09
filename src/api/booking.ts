@@ -1,5 +1,3 @@
-// navozz/aidf-final-back-end/.../src/api/booking.ts
-
 import { Router } from "express";
 import asyncHandler from "express-async-handler"; 
 import { createBooking } from "../application/booking";
