@@ -1,4 +1,3 @@
-// navozz/aidf-final-back-end/.../src/api/booking.ts
 
 import { Router } from "express";
 import asyncHandler from "express-async-handler"; 
@@ -6,11 +5,7 @@ import { createBooking, getUserBookings } from "../application/booking";
 
 const router = Router();
 
-/**
- * POST /api/bookings
- * Creates a new booking record with status: "PENDING".
- * Requires authentication via Clerk middleware.
- */
+
 router.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -19,10 +14,6 @@ router.post(
   })
 );
 
-/**
- * GET /api/bookings/user/:userId
- * Retrieves all bookings for the authenticated user.
- */
 router.get(
   "/user/:userId",
   asyncHandler(async (req, res) => {

@@ -1,4 +1,3 @@
-// navozz/aidf-final-back-end/.../src/application/booking.ts
 
 import { Request } from "express";
 import { getAuth } from "@clerk/express"; 
@@ -8,7 +7,7 @@ import UnauthorizedError from "../domain/errors/unauthorized-error";
 import ValidationError from "../domain/errors/validation-error";
 import NotFoundError from "../domain/errors/not-found-error";
 
-// Helper function to simulate unique room number generation (Task 1.1)
+
 function generateUniqueRoomNumber(): number {
   return Math.floor(100 + Math.random() * 900);
 }
@@ -54,7 +53,7 @@ export async function createBooking(req: Request) {
 }
 
 
-// ---------------------- NEW FUNCTION (Task 1.3) ----------------------
+
 
 export async function getUserBookings(req: Request) {
   const { userId } = getAuth(req);

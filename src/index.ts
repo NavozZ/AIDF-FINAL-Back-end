@@ -17,11 +17,6 @@ import globalErrorHandlingMiddleware from "./api/middleware/global-error-handlin
 
 const app = express();
 
-/**
- * ✅ STRIPE WEBHOOK ENDPOINT
- * Important: Must NOT use express.json() before this route
- * Stripe requires the raw body to validate the signature.
- */
 app.post(
   "/api/stripe/webhook",
   bodyParser.raw({ type: "application/json" }),
@@ -40,16 +35,16 @@ app.use(
 
 app.use(clerkMiddleware());
 
-// ✅ API Routes
+
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/locations", locationsRouter);
-app.use("/api/bookings", bookingRouter); // <-- NEW
-app.use("/api/payments", paymentRouter); // <-- NEW
+app.use("/api/bookings", bookingRouter); 
+app.use("/api/payments", paymentRouter); 
 
 app.use(globalErrorHandlingMiddleware);
 
-// Database Connection
+
 connectDB();
 
 const PORT = 8000;
