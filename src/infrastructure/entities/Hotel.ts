@@ -31,6 +31,10 @@ const hotelSchema = new mongoose.Schema({
     ref: "Review",
     default: [],
   },
+  embedding: {
+    type: [Number],
+    default: [],
+  },
 
   // --- NEW FIELD FOR STRIPE PAYMENT SUPPORT ---
   stripePriceId: {

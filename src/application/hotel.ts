@@ -1,11 +1,12 @@
 import Hotel from "../infrastructure/entities/Hotel";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
+import { generateEmbedding } from "./utils/embeddings";
+
+import { CreateHotelDTO, SearchHotelDTO } from "../domain/dtos/hotel";
 
 import { Request, Response, NextFunction } from "express";
-import { CreateHotelDTO, SearchHotelDTO } from "../domain/dtos/hotel";
 import { z } from "zod";
-import { generateEmbedding } from "./utils/embeddings";
 
 export const getAllHotels = async (
   req: Request,
@@ -78,7 +79,11 @@ export const createHotel = async (
       throw new ValidationError(`${result.error.message}`);
     }
 
-    await Hotel.create(result.data);
+    const embedding = await generateEmbedding(
+      `${result.data.name} ${result.data.description} ${result.data.location} ${result.data.price}`
+    );
+
+    await Hotel.create({ ...result.data, embedding });
     res.status(201).send();
   } catch (error) {
     next(error);

@@ -20,7 +20,7 @@ export const respondToAIQuery = async (
     const hotelsData = await Hotel.find();
 
     const response = await openai.responses.create({
-      model: "gpt-5",
+      model: "gpt-4o-mini",
       instructions: `You are a helpful assistant that helps users to choose a hotel for a vibe they describe. the availble hotels are given below. Based on that recommend them a hotel along with the information: ${JSON.stringify(
         hotelsData
       )}`,
