@@ -28,7 +28,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -49,5 +49,5 @@ connectDB();
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log("Server is listening on:" + PORT);
+  console.log("Server is listening on PORT: ", PORT);
 });
