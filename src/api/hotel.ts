@@ -1,38 +1,36 @@
-import express from "express";
-import { Request, Response, NextFunction } from "express";
-
-import {
-  getAllHotels,
-  createHotel,
-  getHotelById,
-  updateHotel,
-  patchHotel,
-  deleteHotel,
-  getAllHotelsBySearchQuery,
+import { Router } from "express";
+import { 
+    getAllHotels, 
+    createHotel, 
+    getHotelById, 
+    updateHotel, 
+    patchHotel,
+    deleteHotel, 
+    getAllHotelsBySearchQuery, 
 } from "../application/hotel";
+import authorizationMiddleware from "./middleware/authorization-middleware";
 import isAuthenticated from "./middleware/authentication-middleware";
-import isAdmin from "./middleware/authorization-middleware";
-import { respondToAIQuery } from "../application/ai";
+import { respondToAIQuery } from "../application/ai"; 
 
-const hotelsRouter = express.Router();
+const router = Router();
 
-const preMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.method, req.url);
-  next();
-};
-hotelsRouter
-  .route("/")
-  .get(getAllHotels)
-  .post(isAuthenticated, isAdmin, createHotel);
 
-hotelsRouter.route("/ai").post(respondToAIQuery);
-hotelsRouter.route("/search").get(getAllHotelsBySearchQuery);
+router.get("/", getAllHotels); 
 
-hotelsRouter
-  .route("/:_id")
-  .get(isAuthenticated, getHotelById)
-  .put(updateHotel)
-  .patch(patchHotel)
-  .delete(deleteHotel);
 
-export default hotelsRouter;
+router.post("/ai-search", respondToAIQuery); 
+router.get("/search", getAllHotelsBySearchQuery); 
+
+
+router.get("/:_id", getHotelById); 
+
+
+
+router.use(isAuthenticated, authorizationMiddleware); 
+
+router.post("/", createHotel);
+router.put("/:_id", updateHotel);
+router.patch("/:_id", patchHotel);
+router.delete("/:_id", deleteHotel);
+
+export default router;
