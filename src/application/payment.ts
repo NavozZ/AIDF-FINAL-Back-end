@@ -82,7 +82,6 @@ export async function createCheckoutSession(req: Request) {
         metadata: {
             bookingId: booking._id.toString(), // CRITICAL for webhook linking
         },
-        customer_email: req.auth.user?.emailAddresses[0]?.emailAddress || undefined,
     });
 
    
