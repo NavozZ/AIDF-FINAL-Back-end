@@ -26,9 +26,23 @@ app.post(
 // Convert HTTP requests to JSON (except webhook above)
 app.use(express.json());
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,          // production Netlify URL
+  "http://localhost:5173",            // local Vite dev server
+  "http://localhost:3000",            // fallback local port
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. Postman, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
     credentials: true,
   })
 );
